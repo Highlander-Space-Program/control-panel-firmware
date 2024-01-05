@@ -18,31 +18,31 @@ class EdgeDetector {
 };
 
 // Buttons
-const int START_SEQ_1 = 1;
-const int FILL_SEQ_1 = 2;
-const int FILL_SEQ_2 = 3;
-const int FILL_SEQ_3 = 4;
-const int NOS_FV_08 = 5;
-const int NOS_FV_04 = 6;
-const int N2_FV_02 = 7;
-const int ETOH_FV_03 = 8;
-const int SHUT_DOWN = 9;
-const int IGNITE_START = 10;
-const int ABORT = 11;
+const int START_SEQ_1 = 2;
+const int FILL_SEQ_1 = 3;
+const int FILL_SEQ_2 = 4;
+const int FILL_SEQ_3 = 5;
+const int NOS_FV_08 = 6;
+const int NOS_FV_04 = 7;
+const int N2_FV_02 = 8;
+const int ETOH_FV_03 = 9;
+const int SHUT_DOWN = 10;
+const int IGNITE_START = 11;
+const int ABORT_CMD = 12;
 
  // enums
   enum COMMANDS { 
-    START_SEQUENCE_1,
-    FILL_SEQUENCE_1,
-    FILL_SEQUENCE_2,
-    FILL_SEQUENCE_3,
     NOS_VALVE_2_TOGGLE,
     NOS_VALVE_1_TOGGLE,
     N2_VALVE_TOGGLE,
     ETOH_FLOW_VALVE_TOGGLE,
+    START_SEQUENCE_1,
+    FILL_SEQUENCE_1,
+    FILL_SEQUENCE_2,
+    FILL_SEQUENCE_3,
     CLOSE_ALL,
     IGNITE,
-    ABORT_CMD
+    ABORT
   };
 
 void setup() {
@@ -129,6 +129,6 @@ void loop() {
   // Edge Detection for ABORT Button
   buttonEdgeDetector.update(!digitalRead(ABORT));
   if (buttonEdgeDetector.hasFallen()) {
-    Serial.write(ABORT_CMD);
+    Serial.write(ABORT);
   }
 }
