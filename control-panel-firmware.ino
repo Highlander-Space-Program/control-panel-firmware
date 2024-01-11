@@ -69,7 +69,7 @@ EdgeDetector FILL_SEQ_2_EDGE_DETECTOR;
 EdgeDetector FILL_SEQ_3_EDGE_DETECTOR;
 EdgeDetector NOS_FV_08_EDGE_DETECTOR;
 EdgeDetector NOS_FV_04_EDGE_DETECTOR;
-EdgeDetector NOS_FV_02_EDGE_DETECTOR;
+EdgeDetector N2_FV_02_EDGE_DETECTOR;
 EdgeDetector ETOH_FV_03_EDGE_DETECTOR;
 EdgeDetector SHUT_DOWN_EDGE_DETECTOR;
 EdgeDetector IGNITE_START_EDGE_DETECTOR;
@@ -113,8 +113,8 @@ void loop() {
   }
 
   // Edge Detection for N2_FV_02 Button | Pin 8
-  NOS_FV_02_EDGE_DETECTOR.update(!digitalRead(N2_FV_02));
-  if (NOS_FV_02_EDGE_DETECTOR.hasFallen()) {
+  N2_FV_02_EDGE_DETECTOR.update(!digitalRead(N2_FV_02));
+  if (N2_FV_02_EDGE_DETECTOR.hasFallen()) {
     Serial.write(N2_VALVE_TOGGLE);
   }
 
