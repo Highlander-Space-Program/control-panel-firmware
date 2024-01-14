@@ -30,25 +30,25 @@ const int SHUT_DOWN = 10;
 const int IGNITE_START = 11;
 const int ABORT_CMD = 12;
 
- // enums
-  enum COMMANDS { 
-    NOS_VALVE_2_TOGGLE,
-    NOS_VALVE_1_TOGGLE,
-    N2_VALVE_TOGGLE,
-    ETOH_FLOW_VALVE_TOGGLE,
-    START_SEQUENCE_1,
-    FILL_SEQUENCE_1,
-    FILL_SEQUENCE_2,
-    FILL_SEQUENCE_3,
-    CLOSE_ALL,
-    IGNITE,
-    ABORT
-  };
+// enums
+enum COMMANDS { 
+  NOS_VALVE_2_TOGGLE,
+  NOS_VALVE_1_TOGGLE,
+  N2_VALVE_TOGGLE,
+  ETOH_FLOW_VALVE_TOGGLE,
+  START_SEQUENCE_1,
+  FILL_SEQUENCE_1,
+  FILL_SEQUENCE_2,
+  FILL_SEQUENCE_3,
+  CLOSE_ALL,
+  IGNITE,
+  ABORT
+};
 
 void setup() {
   Serial.begin(9600);
 
-  // Initialize buttons as INPUTS
+  // Initialize buttons as INPUT_PULLUPs
   pinMode(START_SEQ_1, INPUT_PULLUP);
   pinMode(FILL_SEQ_1, INPUT_PULLUP);
   pinMode(FILL_SEQ_2, INPUT_PULLUP);
@@ -60,7 +60,6 @@ void setup() {
   pinMode(SHUT_DOWN, INPUT_PULLUP);
   pinMode(IGNITE_START, INPUT_PULLUP);
   pinMode(ABORT_CMD, INPUT_PULLUP);
-
 }
 
 EdgeDetector START_SEQ_1_EDGE_DETECTOR;
@@ -141,4 +140,6 @@ void loop() {
   if (ABORT_EDGE_DETECTOR.hasFallen()) {
     Serial.write(ABORT);
   }
+
+  delay(100);
 }
