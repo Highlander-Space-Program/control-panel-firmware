@@ -131,13 +131,13 @@ void loop() {
 
   // Edge Detection for IGNITE_START Button | Pin 11
   IGNITE_START_EDGE_DETECTOR.update(!digitalRead(IGNITE_START));
-  if (IGNITE_START_EDGE_DETECTOR.hasFallen()) {
+  if (IGNITE_START_EDGE_DETECTOR.hasRisen()) {
     Serial.write(IGNITE);
   }
 
   // Edge Detection for ABORT Button | Pin 12
   ABORT_EDGE_DETECTOR.update(!digitalRead(ABORT_CMD));
-  if (ABORT_EDGE_DETECTOR.hasFallen()) {
+  if (ABORT_EDGE_DETECTOR.hasRisen()) {
     Serial.write(ABORT);
   }
 
