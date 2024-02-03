@@ -48,18 +48,18 @@ enum COMMANDS {
 void setup() {
   Serial.begin(9600);
 
-  // Initialize buttons as INPUT_PULLUPs
-  pinMode(START_SEQ_1, INPUT_PULLUP);
-  pinMode(FILL_SEQ_1, INPUT_PULLUP);
-  pinMode(FILL_SEQ_2, INPUT_PULLUP);
-  pinMode(FILL_SEQ_3, INPUT_PULLUP);
-  pinMode(NOS_FV_08, INPUT_PULLUP);
-  pinMode(NOS_FV_04, INPUT_PULLUP);
-  pinMode(N2_FV_02, INPUT_PULLUP);
-  pinMode(ETOH_FV_03, INPUT_PULLUP);
-  pinMode(SHUT_DOWN, INPUT_PULLUP);
-  pinMode(IGNITE_START, INPUT_PULLUP);
-  pinMode(ABORT_CMD, INPUT_PULLUP);
+  // Initialize buttons as INPUTs
+  pinMode(START_SEQ_1, INPUT);
+  pinMode(FILL_SEQ_1, INPUT);
+  pinMode(FILL_SEQ_2, INPUT);
+  pinMode(FILL_SEQ_3, INPUT);
+  pinMode(NOS_FV_08, INPUT);
+  pinMode(NOS_FV_04, INPUT);
+  pinMode(N2_FV_02, INPUT);
+  pinMode(ETOH_FV_03, INPUT);
+  pinMode(SHUT_DOWN, INPUT);
+  pinMode(IGNITE_START, INPUT);
+  pinMode(ABORT_CMD, INPUT);
 }
 
 EdgeDetector START_SEQ_1_EDGE_DETECTOR;
@@ -141,5 +141,6 @@ void loop() {
     Serial.write(ABORT);
   }
 
+  // Delay to prevent buttons from sending more than one signal
   delay(100);
 }
