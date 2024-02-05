@@ -48,18 +48,18 @@ enum COMMANDS {
 void setup() {
   Serial.begin(9600);
 
-  // Initialize buttons as INPUT_PULLUPs
-  pinMode(START_SEQ_1, INPUT_PULLUP);
-  pinMode(FILL_SEQ_1, INPUT_PULLUP);
-  pinMode(FILL_SEQ_2, INPUT_PULLUP);
-  pinMode(FILL_SEQ_3, INPUT_PULLUP);
-  pinMode(NOS_FV_08, INPUT_PULLUP);
-  pinMode(NOS_FV_04, INPUT_PULLUP);
-  pinMode(N2_FV_02, INPUT_PULLUP);
-  pinMode(ETOH_FV_03, INPUT_PULLUP);
-  pinMode(SHUT_DOWN, INPUT_PULLUP);
-  pinMode(IGNITE_START, INPUT_PULLUP);
-  pinMode(ABORT_CMD, INPUT_PULLUP);
+  // Initialize buttons as INPUTs
+  pinMode(START_SEQ_1, INPUT);
+  pinMode(FILL_SEQ_1, INPUT);
+  pinMode(FILL_SEQ_2, INPUT);
+  pinMode(FILL_SEQ_3, INPUT);
+  pinMode(NOS_FV_08, INPUT);
+  pinMode(NOS_FV_04, INPUT);
+  pinMode(N2_FV_02, INPUT);
+  pinMode(ETOH_FV_03, INPUT);
+  pinMode(SHUT_DOWN, INPUT);
+  pinMode(IGNITE_START, INPUT);
+  pinMode(ABORT_CMD, INPUT);
 }
 
 EdgeDetector START_SEQ_1_EDGE_DETECTOR;
@@ -77,55 +77,55 @@ EdgeDetector ABORT_EDGE_DETECTOR;
 void loop() {
   // Edge Detection for START_SEQ_1 Button | Pin 2
   START_SEQ_1_EDGE_DETECTOR.update(!digitalRead(START_SEQ_1));
-  if (START_SEQ_1_EDGE_DETECTOR.hasFallen()) {
+  if (START_SEQ_1_EDGE_DETECTOR.hasRisen()) {
     Serial.write(START_SEQUENCE_1);
   }
 
   // Edge Detection for FILL_SEQ_1 Button | Pin 3
   FILL_SEQ_1_EDGE_DETECTOR.update(!digitalRead(FILL_SEQ_1));
-  if (FILL_SEQ_1_EDGE_DETECTOR.hasFallen()) {
+  if (FILL_SEQ_1_EDGE_DETECTOR.hasRisen()) {
     Serial.write(FILL_SEQUENCE_1);
   }
 
   // Edge Detection for FILL_SEQ_2 Button | Pin 4
   FILL_SEQ_2_EDGE_DETECTOR.update(!digitalRead(FILL_SEQ_2));
-  if (FILL_SEQ_2_EDGE_DETECTOR.hasFallen()) {
+  if (FILL_SEQ_2_EDGE_DETECTOR.hasRisen()) {
     Serial.write(FILL_SEQUENCE_2);
   }
 
   // Edge Detection for FILL_SEQ_3 Button | Pin 5
   FILL_SEQ_3_EDGE_DETECTOR.update(!digitalRead(FILL_SEQ_3));
-  if (FILL_SEQ_3_EDGE_DETECTOR.hasFallen()) {
+  if (FILL_SEQ_3_EDGE_DETECTOR.hasRisen()) {
     Serial.write(FILL_SEQUENCE_3);
   }
 
   // Edge Detection for NOS_FV_08 Button | Pin 6
   NOS_FV_08_EDGE_DETECTOR.update(!digitalRead(NOS_FV_08));
-  if (NOS_FV_08_EDGE_DETECTOR.hasFallen()) {
+  if (NOS_FV_08_EDGE_DETECTOR.hasRisen()) {
     Serial.write(NOS_VALVE_2_TOGGLE);
   }
 
   // Edge Detection for NOS_FV_04 Button | Pin 7
   NOS_FV_04_EDGE_DETECTOR.update(!digitalRead(NOS_FV_04));
-  if (NOS_FV_04_EDGE_DETECTOR.hasFallen()) {
+  if (NOS_FV_04_EDGE_DETECTOR.hasRisen()) {
     Serial.write(NOS_VALVE_1_TOGGLE);
   }
 
   // Edge Detection for N2_FV_02 Button | Pin 8
   N2_FV_02_EDGE_DETECTOR.update(!digitalRead(N2_FV_02));
-  if (N2_FV_02_EDGE_DETECTOR.hasFallen()) {
+  if (N2_FV_02_EDGE_DETECTOR.hasRisen()) {
     Serial.write(N2_VALVE_TOGGLE);
   }
 
   // Edge Detection for ETOH_FV_03 Button | Pin 9
   ETOH_FV_03_EDGE_DETECTOR.update(!digitalRead(ETOH_FV_03));
-  if (ETOH_FV_03_EDGE_DETECTOR.hasFallen()) {
+  if (ETOH_FV_03_EDGE_DETECTOR.hasRisen()) {
     Serial.write(ETOH_FLOW_VALVE_TOGGLE);
   }
 
   // Edge Detection for SHUT_DOWN Button | Pin 10
   SHUT_DOWN_EDGE_DETECTOR.update(!digitalRead(SHUT_DOWN));
-  if (SHUT_DOWN_EDGE_DETECTOR.hasFallen()) {
+  if (SHUT_DOWN_EDGE_DETECTOR.hasRisen()) {
     Serial.write(CLOSE_ALL);
   }
 
@@ -141,5 +141,6 @@ void loop() {
     Serial.write(ABORT);
   }
 
+  // Delay to prevent buttons from sending more than one signal
   delay(100);
 }
