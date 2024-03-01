@@ -49,6 +49,13 @@ const int IGNITE_ACTIVATED_L = 22;
 uint8_t receiveAck = 0x00;
 uint8_t bitMask = 0x01;
 
+// LED Booleans
+bool NOS2_OPEN = false;
+bool NOS1_OPEN = false;
+bool N2_OPEN = false;
+bool ETOH_OPEN = false;
+bool IGNITE_ACTIVE = false;
+
 // enums
 enum COMMANDS { 
   OPEN_NOS2 = 2,
@@ -133,38 +140,82 @@ void loop() {
     // Receive serial value
     receiveAck = Serial.read();
 
-    bitMask = 0x01;
-    // Check serial bits to see which valves are open
-    // and turn on corresponding LED
-    while (bitMask != 0x20)
+    // Is NOS2 valve open?
+    if (receiveAck & bitMask)
     {
-      if (receiveAck & bitMask && bitMask == 0x01)
+      if (NOS2_OPEN == false)
       {
+        NOS2_OPEN = true;
         digitalWrite(NOS2_OPENED_L, HIGH);
       }
-      bitMask = bitMask << 1;
-
-      if (receiveAck & bitMask && bitMask == 0x02)
+      else
       {
+        NOS2_OPEN = false;
+        digitalWrite(NOS2_OPENED_L, LOW);
+      }
+    }
+    receiveAck = receiveAck >> 1;
+
+    // Is NOS1 valve open?
+    if (receiveAck & bitMask)
+    {
+      if (NOS1_OPEN == false)
+      {
+        NOS1_OPEN = true;
         digitalWrite(NOS1_OPENED_L, HIGH);
       }
-      bitMask = bitMask << 1;
-      
-      if (receiveAck & bitMask && bitMask == 0x04)
+      else
       {
+        NOS1_OPEN = false;
+        digitalWrite(NOS1_OPENED_L, LOW);
+      }
+    }
+    receiveAck = receiveAck >> 1;
+      
+    // Is N2 valve open?
+    if (receiveAck & bitMask)
+    {
+      if (N2_OPEN == false)
+      {
+        N2_OPEN = true;
         digitalWrite(N2_OPENED_L, HIGH);
       }
-      bitMask = bitMask << 1;
-      
-      if (receiveAck & bitMask && bitMask == 0x08)
+      else
       {
+        N2_OPEN = false;
+        digitalWrite(N2_OPENED_L, LOW);
+      }
+    }
+    receiveAck = receiveAck >> 1;
+      
+    // Is ETOH valve open?
+    if (receiveAck & bitMask)
+    {
+      if (ETOH_OPEN == false)
+      {
+        ETOH_OPEN = true;
         digitalWrite(ETOH_OPENED_L, HIGH);
       }
-      bitMask = bitMask << 1;
-
-      if (receiveAck & bitMask && bitMask == 0x10)
+      else
       {
+        ETOH_OPEN = false;
+        digitalWrite(ETOH_OPENED_L, LOW);
+      }
+    }
+    receiveAck = receiveAck >> 1;
+
+    // Is IGNITE active?
+    if (receiveAck & bitMask)
+    {
+      if (IGNITE_ACTIVE == false)
+      {
+        IGNITE_ACTIVE = true;
         digitalWrite(IGNITE_ACTIVATED_L, HIGH);
+      }
+      else
+      {
+        IGNITE_ACTIVE = false;
+        digitalWrite(IGNITE_ACTIVATED_L, LOW);
       }
     }
   }
