@@ -18,25 +18,25 @@ class EdgeDetector {
 };
 
 // Buttons
-const int OPEN_NOS2_B = 2;
+const int OPEN_NOS2_B = 6;
 const int CLOSE_NOS2_B = 3;
-const int OPEN_NOS1_B = 4;
-const int CLOSE_NOS1_B = 5;
-const int OPEN_N2_B = 6;
-const int CLOSE_N2_B = 7;
-const int OPEN_ETOH_B = 8;
-const int CLOSE_ETOH_B = 9;
-const int START_1_B = 10;
-const int FILL_1_B = 11;
-const int FILL_2_B = 12;
-const int FILL_3_B = 13;
-const int ABORT_B = 16;
+const int OPEN_NOS1_B = 7;
+const int CLOSE_NOS1_B = 24;
+const int OPEN_N2_B = 8;
+const int CLOSE_N2_B = 4;
+const int OPEN_ETOH_B = 9;
+const int CLOSE_ETOH_B = 5;
+const int START_1_B = 25;
+//const int FILL_1_B = 11;
+//const int FILL_2_B = 12;
+//const int FILL_3_B = 13;
+const int ABORT_B = 12;
 const int CHECK_STATE_B = 18;
 
 // Switches
-const int CLOSE_ALL_S = 14;
-const int ACTIVATE_IGNITER_S = 15;
-const int ACTIVATE_SERVOS_S = 17;
+const int CLOSE_ALL_S = 10;
+const int ACTIVATE_IGNITER_S = 11;
+const int ACTIVATE_SERVOS_S = 2;
 
 // LEDs
 const int NOS2_OPENED_L = 18;
@@ -57,28 +57,28 @@ bool ETOH_OPEN = false;
 bool IGNITE_ACTIVE = false;
 
 // enums
-enum COMMANDS { 
-  OPEN_NOS2 = 2,
-  CLOSE_NOS2 = 3,
-  OPEN_NOS1 = 4,
-  CLOSE_NOS1 = 5,
-  OPEN_N2 = 6,
-  CLOSE_N2 = 7,
-  OPEN_ETOH = 8,
-  CLOSE_ETOH = 9,
-  START_1 = 10,
-  FILL_1 = 11,
-  FILL_2 = 12,
-  FILL_3 = 13,
-  CLOSE_ALL = 14,
-  DECLOSE_ALL = 14,
-  ACTIVATE_IGNITER = 15,
+enum COMMANDS {
+  OPEN_NOS2 = 0,
+  CLOSE_NOS2 = 1,
+  OPEN_NOS1 = 2,
+  CLOSE_NOS1 = 3,
+  OPEN_N2 = 4,
+  CLOSE_N2 = 5,
+  OPEN_ETOH = 6,
+  CLOSE_ETOH = 7,
+  START_1 = 8,
+  FILL_1 = 9,
+  FILL_2 = 10,
+  FILL_3 = 11,
+  CLOSE_ALL = 12,
+  DECLOSE_ALL = 13,
+  ACTIVATE_IGNITER = 14,
   DEACTIVATE_IGNITER = 15,
   ABORT = 16,
   ACTIVATE_SERVOS = 17,
-  DEACTIVATE_SERVOS = 17,
-  DEABORT = 16,
-  CHECK_STATE = 18
+  DEACTIVATE_SERVOS = 18,
+  DEABORT = 19,
+  CHECK_STATE = 20
 };
 
 void setup() {
@@ -93,17 +93,17 @@ void setup() {
   pinMode(CLOSE_N2_B, INPUT);
   pinMode(OPEN_ETOH_B, INPUT);
   pinMode(CLOSE_ETOH_B, INPUT);
-  pinMode(START_1_B, INPUT);
-  pinMode(FILL_1_B, INPUT);
-  pinMode(FILL_2_B, INPUT);
-  pinMode(FILL_3_B, INPUT);
-  pinMode(ABORT_B, INPUT);
+  pinMode(START_1_B, INPUT_PULLUP);
+  //pinMode(FILL_1_B, INPUT);
+  //pinMode(FILL_2_B, INPUT);
+  //pinMode(FILL_3_B, INPUT);
+  pinMode(ABORT_B, INPUT_PULLUP);
   pinMode(CHECK_STATE_B, INPUT);
 
   // Initialize Switches as INPUTs
-  pinMode(CLOSE_ALL_S, INPUT);
-  pinMode(ACTIVATE_IGNITER_S, INPUT);
-  pinMode(ACTIVATE_SERVOS_S, INPUT);
+  pinMode(CLOSE_ALL_S, INPUT_PULLUP);
+  pinMode(ACTIVATE_IGNITER_S, INPUT_PULLUP);
+  pinMode(ACTIVATE_SERVOS_S, INPUT_PULLUP);
 
   // Initialize LEDs
   pinMode(NOS2_OPENED_L, OUTPUT);
@@ -276,6 +276,7 @@ void loop() {
     Serial.write(START_1);
   }
 
+/*
   // Edge Detection for FILL_1 Button | Pin 11
   FILL_1_EDGE_DETECTOR.update(!digitalRead(FILL_1_B));
   if (FILL_1_EDGE_DETECTOR.hasRisen()) {
@@ -293,6 +294,7 @@ void loop() {
   if (FILL_3_EDGE_DETECTOR.hasRisen()) {
     Serial.write(FILL_3);
   }
+  */
 
   // Edge Detection for ABORT Button | Pin 16
   ABORT_EDGE_DETECTOR.update(!digitalRead(ABORT_B));
