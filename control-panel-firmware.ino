@@ -26,7 +26,6 @@ const int OPEN_N2_B = 8;
 const int CLOSE_N2_B = 4;
 const int OPEN_ETOH_B = 9;
 const int CLOSE_ETOH_B = 5;
-const int START_1_B = 25;
 //const int FILL_1_B = 11;
 //const int FILL_2_B = 12;
 //const int FILL_3_B = 13;
@@ -37,13 +36,15 @@ const int CHECK_STATE_B = 18;
 const int CLOSE_ALL_S = 10;
 const int ACTIVATE_IGNITER_S = 11;
 const int ACTIVATE_SERVOS_S = 2;
+const int START_1_S = 25;
 
 // LEDs
-const int NOS2_OPENED_L = 18;
-const int NOS1_OPENED_L = 19;
-const int N2_OPENED_L = 20;
-const int ETOH_OPENED_L = 21;
-const int IGNITE_ACTIVATED_L = 22;
+const int NOS2_OPENED_L = 33;
+const int NOS1_OPENED_L = 35;
+const int N2_OPENED_L = 37;
+const int ETOH_OPENED_L = 39;
+const int IGNITE_ACTIVATED_L = 41;
+const int RECV_ACK = 27;
 
 // Serial Check
 uint8_t receiveAck = 0x00;
@@ -78,7 +79,8 @@ enum COMMANDS {
   ACTIVATE_SERVOS = 17,
   DEACTIVATE_SERVOS = 18,
   DEABORT = 19,
-  CHECK_STATE = 20
+  CHECK_STATE = 20,
+  DESTART = 21
 };
 
 void setup() {
@@ -93,7 +95,7 @@ void setup() {
   pinMode(CLOSE_N2_B, INPUT);
   pinMode(OPEN_ETOH_B, INPUT);
   pinMode(CLOSE_ETOH_B, INPUT);
-  pinMode(START_1_B, INPUT_PULLUP);
+
   //pinMode(FILL_1_B, INPUT);
   //pinMode(FILL_2_B, INPUT);
   //pinMode(FILL_3_B, INPUT);
@@ -104,6 +106,7 @@ void setup() {
   pinMode(CLOSE_ALL_S, INPUT_PULLUP);
   pinMode(ACTIVATE_IGNITER_S, INPUT_PULLUP);
   pinMode(ACTIVATE_SERVOS_S, INPUT_PULLUP);
+  pinMode(START_1_S, INPUT_PULLUP);
 
   // Initialize LEDs
   pinMode(NOS2_OPENED_L, OUTPUT);
@@ -111,6 +114,7 @@ void setup() {
   pinMode(N2_OPENED_L, OUTPUT);
   pinMode(ETOH_OPENED_L, OUTPUT);
   pinMode(IGNITE_ACTIVATED_L, OUTPUT);
+  pinMode(RECV_ACK, OUTPUT);
 }
 
 // Button Edge Detectors
@@ -135,88 +139,55 @@ EdgeDetector ACTIVATE_IGNITER_EDGE_DETECTOR;
 EdgeDetector ACTIVATE_SERVOS_EDGE_DETECTOR;
 
 void loop() {
+  digitalWrite(RECV_ACK, LOW);
   // Check if there are open valves
   if (Serial.available() > 0) {
     // Receive serial value
     receiveAck = Serial.read();
+    digitalWrite(RECV_ACK, HIGH);
 
-    // Is NOS2 valve open?
-    if (receiveAck & bitMask)
-    {
-      if (NOS2_OPEN == false)
-      {
-        NOS2_OPEN = true;
-        digitalWrite(NOS2_OPENED_L, HIGH);
-      }
-      else
-      {
-        NOS2_OPEN = false;
-        digitalWrite(NOS2_OPENED_L, LOW);
-      }
+    //IGNITE ack
+    if (receiveAck & bitMask) {
+      digitalWrite(IGNITE_ACTIVATED_L, HIGH);
+    }
+    else {
+      digitalWrite(IGNITE_ACTIVATED_L, LOW);
     }
     receiveAck = receiveAck >> 1;
 
-    // Is NOS1 valve open?
-    if (receiveAck & bitMask)
-    {
-      if (NOS1_OPEN == false)
-      {
-        NOS1_OPEN = true;
-        digitalWrite(NOS1_OPENED_L, HIGH);
-      }
-      else
-      {
-        NOS1_OPEN = false;
-        digitalWrite(NOS1_OPENED_L, LOW);
-      }
+    //ETOH ack
+    if (receiveAck & bitMask) {
+      digitalWrite(ETOH_OPENED_L, HIGH);
     }
-    receiveAck = receiveAck >> 1;
-      
-    // Is N2 valve open?
-    if (receiveAck & bitMask)
-    {
-      if (N2_OPEN == false)
-      {
-        N2_OPEN = true;
-        digitalWrite(N2_OPENED_L, HIGH);
-      }
-      else
-      {
-        N2_OPEN = false;
-        digitalWrite(N2_OPENED_L, LOW);
-      }
-    }
-    receiveAck = receiveAck >> 1;
-      
-    // Is ETOH valve open?
-    if (receiveAck & bitMask)
-    {
-      if (ETOH_OPEN == false)
-      {
-        ETOH_OPEN = true;
-        digitalWrite(ETOH_OPENED_L, HIGH);
-      }
-      else
-      {
-        ETOH_OPEN = false;
-        digitalWrite(ETOH_OPENED_L, LOW);
-      }
+    else {
+      digitalWrite(ETOH_OPENED_L, LOW);
     }
     receiveAck = receiveAck >> 1;
 
-    // Is IGNITE active?
-    if (receiveAck & bitMask)
-    {
-      if (IGNITE_ACTIVE == false)
-      {
-        IGNITE_ACTIVE = true;
-        digitalWrite(IGNITE_ACTIVATED_L, HIGH);
-      }
-      else
-      {
-        IGNITE_ACTIVE = false;
-        digitalWrite(IGNITE_ACTIVATED_L, LOW);
-      }
+    //N2 ack
+    if (receiveAck & bitMask) {
+      digitalWrite(N2_OPENED_L, HIGH);
+    }
+    else {
+      digitalWrite(N2_OPENED_L, LOW);
+    }
+    receiveAck = receiveAck >> 1;
+
+    //NOS1 ack
+    if (receiveAck & bitMask) {
+      digitalWrite(NOS1_OPENED_L, HIGH);
+    }
+    else {
+      digitalWrite(NOS1_OPENED_L, LOW);
+    }
+    receiveAck = receiveAck >> 1;
+
+    //NOS2 ack
+    if (receiveAck & bitMask) {
+      digitalWrite(NOS2_OPENED_L, HIGH);
+    }
+    else {
+      digitalWrite(NOS2_OPENED_L, LOW);
     }
   }
 
@@ -270,10 +241,13 @@ void loop() {
     Serial.write(CLOSE_ETOH);
   }
 
-  // Edge Detection for START_1 Button | Pin 10
-  START_1_EDGE_DETECTOR.update(!digitalRead(START_1_B));
+  // Edge Detection for START_1 Switch | Pin 10
+  START_1_EDGE_DETECTOR.update(!digitalRead(START_1_S));
   if (START_1_EDGE_DETECTOR.hasRisen()) {
     Serial.write(START_1);
+  }
+  else if (START_1_EDGE_DETECTOR.hasFallen()) {
+    Serial.write(DESTART);
   }
 
 /*
