@@ -17,6 +17,11 @@ class EdgeDetector {
     bool hasFallen() { return fallen; }
 };
 
+//Counters
+int presscnt;
+int unpresscnt;
+int buzzcnt = 50;
+
 // Buttons
 const int OPEN_NOS2_B = 6;
 const int CLOSE_NOS2_B = 3;
@@ -57,6 +62,9 @@ bool N2_OPEN = false;
 bool ETOH_OPEN = false;
 bool IGNITE_ACTIVE = false;
 
+//Buzzer
+const int BUZZER = 23;
+
 // enums
 enum COMMANDS {
   OPEN_NOS2 = 0,
@@ -82,6 +90,8 @@ enum COMMANDS {
   CHECK_STATE = 20,
   DESTART = 21
 };
+
+enum abortState {ABORT_DEACTIVATED, ABORT_ACTIVATED, ABORT_PRESSED, ABORT_RELEASED} abortState = ABORT_DEACTIVATED;
 
 void setup() {
   Serial.begin(9600);
@@ -115,6 +125,9 @@ void setup() {
   pinMode(ETOH_OPENED_L, OUTPUT);
   pinMode(IGNITE_ACTIVATED_L, OUTPUT);
   pinMode(RECV_ACK, OUTPUT);
+
+  //Initialize Buzzer
+  pinMode(BUZZER, OUTPUT);
 }
 
 // Button Edge Detectors
@@ -138,13 +151,18 @@ EdgeDetector CLOSE_ALL_EDGE_DETECTOR;
 EdgeDetector ACTIVATE_IGNITER_EDGE_DETECTOR;
 EdgeDetector ACTIVATE_SERVOS_EDGE_DETECTOR;
 
+
 void loop() {
+  //turn off buzzer and received ack light
+  digitalWrite(BUZZER, LOW);
   digitalWrite(RECV_ACK, LOW);
+
   // Check if there are open valves
   if (Serial.available() > 0) {
     // Receive serial value
     receiveAck = Serial.read();
     digitalWrite(RECV_ACK, HIGH);
+    digitalWrite(BUZZER, HIGH);
 
     //IGNITE ack
     if (receiveAck & bitMask) {
@@ -270,12 +288,13 @@ void loop() {
   }
   */
 
+  
   // Edge Detection for ABORT Button | Pin 16
   ABORT_EDGE_DETECTOR.update(!digitalRead(ABORT_B));
-  if (ABORT_EDGE_DETECTOR.hasRisen()) {
+  if (ABORT_EDGE_DETECTOR.hasFallen()) {
     Serial.write(ABORT);
   }
-  else if (ABORT_EDGE_DETECTOR.hasFallen()) {
+  else if (ABORT_EDGE_DETECTOR.hasRisen()) {
     Serial.write(DEABORT);
   }
 
@@ -314,6 +333,12 @@ void loop() {
     Serial.write(DEACTIVATE_SERVOS);
   }
 
+  //if 2 seconds have passed turn on buzzer
+  if (buzzcnt > 20) {
+    digitalWrite(BUZZER, HIGH);
+    buzzcnt = 0;
+  }
+  ++buzzcnt;
   // Delay to prevent buttons from sending more than one signal
   delay(100);
 }
