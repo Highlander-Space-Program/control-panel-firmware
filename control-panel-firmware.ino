@@ -1,5 +1,3 @@
-#include <XBee.h>
-
 // class to detect edges courtesy of Mark
 class EdgeDetector {
   private:
@@ -19,7 +17,7 @@ class EdgeDetector {
     bool hasFallen() { return fallen; }
 };
 
-// Counters
+//Counters
 int presscnt;
 int unpresscnt;
 int buzzcnt = 50;
@@ -64,7 +62,7 @@ bool N2_OPEN = false;
 bool ETOH_OPEN = false;
 bool IGNITE_ACTIVE = false;
 
-// Buzzer
+//Buzzer
 const int BUZZER = 23;
 
 // enums
@@ -93,16 +91,10 @@ enum COMMANDS {
   DESTART = 21
 };
 
-// XBee
-XBee xbee = XBee();
-
 enum abortState {ABORT_DEACTIVATED, ABORT_ACTIVATED, ABORT_PRESSED, ABORT_RELEASED} abortState = ABORT_DEACTIVATED;
 
 void setup() {
   Serial.begin(9600);
-
-  // Initialize xbee to use hardware serial
-  xbee.setSerial(Serial);
 
   // Initialize Buttons as INPUTs
   pinMode(OPEN_NOS2_B, INPUT);
@@ -114,9 +106,9 @@ void setup() {
   pinMode(OPEN_ETOH_B, INPUT);
   pinMode(CLOSE_ETOH_B, INPUT);
 
-  // pinMode(FILL_1_B, INPUT);
-  // pinMode(FILL_2_B, INPUT);
-  // pinMode(FILL_3_B, INPUT);
+  //pinMode(FILL_1_B, INPUT);
+  //pinMode(FILL_2_B, INPUT);
+  //pinMode(FILL_3_B, INPUT);
   pinMode(ABORT_B, INPUT_PULLUP);
   pinMode(CHECK_STATE_B, INPUT);
 
@@ -134,7 +126,7 @@ void setup() {
   pinMode(IGNITE_ACTIVATED_L, OUTPUT);
   pinMode(RECV_ACK, OUTPUT);
 
-  // Initialize Buzzer
+  //Initialize Buzzer
   pinMode(BUZZER, OUTPUT);
 }
 
@@ -159,16 +151,11 @@ EdgeDetector CLOSE_ALL_EDGE_DETECTOR;
 EdgeDetector ACTIVATE_IGNITER_EDGE_DETECTOR;
 EdgeDetector ACTIVATE_SERVOS_EDGE_DETECTOR;
 
-// Buffer for XBee
-uint8_t txBuffer = 999;
-bool bufferSet = false;
 
 void loop() {
-  // turn off buzzer and received ack light
+  //turn off buzzer and received ack light
   digitalWrite(BUZZER, LOW);
   digitalWrite(RECV_ACK, LOW);
-
-  XBeeAddress64 addr64 = XBeeAddress64(0x00000000, 0x0000FFFF);
 
   // Check if there are open valves
   if (Serial.available() > 0) {
@@ -177,7 +164,7 @@ void loop() {
     digitalWrite(RECV_ACK, HIGH);
     digitalWrite(BUZZER, HIGH);
 
-    // IGNITE ack
+    //IGNITE ack
     if (receiveAck & bitMask) {
       digitalWrite(IGNITE_ACTIVATED_L, HIGH);
     }
@@ -186,7 +173,7 @@ void loop() {
     }
     receiveAck = receiveAck >> 1;
 
-    // ETOH ack
+    //ETOH ack
     if (receiveAck & bitMask) {
       digitalWrite(ETOH_OPENED_L, HIGH);
     }
@@ -195,7 +182,7 @@ void loop() {
     }
     receiveAck = receiveAck >> 1;
 
-    // N2 ack
+    //N2 ack
     if (receiveAck & bitMask) {
       digitalWrite(N2_OPENED_L, HIGH);
     }
@@ -204,7 +191,7 @@ void loop() {
     }
     receiveAck = receiveAck >> 1;
 
-    // NOS1 ack
+    //NOS1 ack
     if (receiveAck & bitMask) {
       digitalWrite(NOS1_OPENED_L, HIGH);
     }
@@ -213,7 +200,7 @@ void loop() {
     }
     receiveAck = receiveAck >> 1;
 
-    // NOS2 ack
+    //NOS2 ack
     if (receiveAck & bitMask) {
       digitalWrite(NOS2_OPENED_L, HIGH);
     }
@@ -227,122 +214,94 @@ void loop() {
   // Edge Detection for OPEN_NOS2 Button | Pin 2
   OPEN_NOS2_EDGE_DETECTOR.update(!digitalRead(OPEN_NOS2_B));
   if (OPEN_NOS2_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(OPEN_NOS2);
-    txBuffer = OPEN_NOS2;
-    bufferSet = true;
+    Serial.write(OPEN_NOS2);
   }
 
   // Edge Detection for CLOSE_NOS2 Button | Pin 3
   CLOSE_NOS2_EDGE_DETECTOR.update(!digitalRead(CLOSE_NOS2_B));
   if (CLOSE_NOS2_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(CLOSE_NOS2);
-    txBuffer = CLOSE_NOS2;
-    bufferSet = true;
+    Serial.write(CLOSE_NOS2);
   }
 
   // Edge Detection for OPEN_NOS1 Button | Pin 4
   OPEN_NOS1_EDGE_DETECTOR.update(!digitalRead(OPEN_NOS1_B));
   if (OPEN_NOS1_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(OPEN_NOS1);
-    txBuffer = OPEN_NOS1;
-    bufferSet = true;
+    Serial.write(OPEN_NOS1);
   }
 
   // Edge Detection for CLOSE_NOS1 Button | Pin 5
   CLOSE_NOS1_EDGE_DETECTOR.update(!digitalRead(CLOSE_NOS1_B));
   if (CLOSE_NOS1_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(CLOSE_NOS1);
-    txBuffer = CLOSE_NOS1;
-    bufferSet = true;
+    Serial.write(CLOSE_NOS1);
   }
 
   // Edge Detection for OPEN_N2 Button | Pin 6
   OPEN_N2_EDGE_DETECTOR.update(!digitalRead(OPEN_N2_B));
   if (OPEN_N2_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(OPEN_N2);
-    txBuffer = OPEN_N2;
-    bufferSet = true;
+    Serial.write(OPEN_N2);
   }
 
   // Edge Detection for CLOSE_N2 Button | Pin 7
   CLOSE_N2_EDGE_DETECTOR.update(!digitalRead(CLOSE_N2_B));
   if (CLOSE_N2_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(CLOSE_N2);
-    txBuffer = CLOSE_N2;
-    bufferSet = true;
+    Serial.write(CLOSE_N2);
   }
 
   // Edge Detection for OPEN_ETOH Button | Pin 8
   OPEN_ETOH_EDGE_DETECTOR.update(!digitalRead(OPEN_ETOH_B));
   if (OPEN_ETOH_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(OPEN_ETOH);
-    txBuffer = OPEN_ETOH;
-    bufferSet = true;
+    Serial.write(OPEN_ETOH);
   }
 
   // Edge Detection for CLOSE_ETOH Button | Pin 9
   CLOSE_ETOH_EDGE_DETECTOR.update(!digitalRead(CLOSE_ETOH_B));
   if (CLOSE_ETOH_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(CLOSE_ETOH);
-    txBuffer = CLOSE_ETOH;
-    bufferSet = true;
+    Serial.write(CLOSE_ETOH);
   }
 
   // Edge Detection for START_1 Switch | Pin 10
   START_1_EDGE_DETECTOR.update(!digitalRead(START_1_S));
   if (START_1_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(START_1);
-    txBuffer = START_1;
-    bufferSet = true;
+    Serial.write(START_1);
   }
   else if (START_1_EDGE_DETECTOR.hasFallen()) {
-    // Serial.write(DESTART);
-    txBuffer = DESTART;
-    bufferSet = true;
+    Serial.write(DESTART);
   }
 
 /*
   // Edge Detection for FILL_1 Button | Pin 11
   FILL_1_EDGE_DETECTOR.update(!digitalRead(FILL_1_B));
   if (FILL_1_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(FILL_1);
-    txBuffer = FILL_1;
+    Serial.write(FILL_1);
   }
 
   // Edge Detection for FILL_2 Button | Pin 12
   FILL_2_EDGE_DETECTOR.update(!digitalRead(FILL_2_B));
   if (FILL_2_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(FILL_2);
-    txBuffer = FILL_2;
+    Serial.write(FILL_2);
   }
 
   // Edge Detection for FILL_3 Button | Pin 13
   FILL_3_EDGE_DETECTOR.update(!digitalRead(FILL_3_B));
   if (FILL_3_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(FILL_3);
-    txBuffer = FILL_3;
+    Serial.write(FILL_3);
   }
-*/
+  */
+
   
   // Edge Detection for ABORT Button | Pin 16
   ABORT_EDGE_DETECTOR.update(!digitalRead(ABORT_B));
   if (ABORT_EDGE_DETECTOR.hasFallen()) {
-    // Serial.write(ABORT);
-    txBuffer = ABORT;
-    bufferSet = true;
+    Serial.write(ABORT);
   }
   else if (ABORT_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(DEABORT);
-    txBuffer = DEABORT;
-    bufferSet = true;
+    Serial.write(DEABORT);
   }
 
   // Edge Detection for CHECK_STATE Button | Pin 18
   CHECK_STATE_EDGE_DETECTOR.update(!digitalRead(CHECK_STATE_B));
   if (CHECK_STATE_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(CHECK_STATE);
-    txBuffer = CHECK_STATE;
-    bufferSet = true;
+    Serial.write(CHECK_STATE);
   }
 
   // Switches
@@ -350,58 +309,36 @@ void loop() {
   // Edge Detection for CLOSE_ALL Switch | Pin 14
   CLOSE_ALL_EDGE_DETECTOR.update(!digitalRead(CLOSE_ALL_S));
   if (CLOSE_ALL_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(CLOSE_ALL);
-    txBuffer = CLOSE_ALL;
-    bufferSet = true;
+    Serial.write(CLOSE_ALL);
   }
   else if (CLOSE_ALL_EDGE_DETECTOR.hasFallen()) {
-    // Serial.write(DECLOSE_ALL);
-    txBuffer = DECLOSE_ALL;
-    bufferSet = true;
+    Serial.write(DECLOSE_ALL);
   }
 
   // Edge Detection for ACTIVATE_IGNITER Switch | Pin 15
   ACTIVATE_IGNITER_EDGE_DETECTOR.update(!digitalRead(ACTIVATE_IGNITER_S));
   if (ACTIVATE_IGNITER_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(ACTIVATE_IGNITER);
-    txBuffer = ACTIVATE_IGNITER;
-    bufferSet = true;
+    Serial.write(ACTIVATE_IGNITER);
   }
   else if (ACTIVATE_IGNITER_EDGE_DETECTOR.hasFallen()) {
-    // Serial.write(DEACTIVATE_IGNITER);
-    txBuffer = DEACTIVATE_IGNITER;
-    bufferSet = true;
+    Serial.write(DEACTIVATE_IGNITER);
   }
 
   // Edge Detection for ACTIVATE_SERVOS Button | Pin 17
   ACTIVATE_SERVOS_EDGE_DETECTOR.update(!digitalRead(ACTIVATE_SERVOS_S));
   if (ACTIVATE_SERVOS_EDGE_DETECTOR.hasRisen()) {
-    // Serial.write(ACTIVATE_SERVOS);
-    txBuffer = ACTIVATE_SERVOS;
-    bufferSet = true;
+    Serial.write(ACTIVATE_SERVOS);
   }
   else if (ACTIVATE_SERVOS_EDGE_DETECTOR.hasFallen()) {
-    // Serial.write(DEACTIVATE_SERVOS);
-    txBuffer = DEACTIVATE_SERVOS;
-    bufferSet = true;
+    Serial.write(DEACTIVATE_SERVOS);
   }
 
-  // if 2 seconds have passed turn on buzzer
+  //if 2 seconds have passed turn on buzzer
   if (buzzcnt > 20) {
     digitalWrite(BUZZER, HIGH);
     buzzcnt = 0;
   }
   ++buzzcnt;
-
-  ZBTxRequest zbTx = ZBTxRequest(addr64, txBuffer, sizeof(txBuffer));
-
-  if (bufferSet == true)
-  {
-    xbee.send(zbTx);
-  }
-
-  bufferSet = false;
-
   // Delay to prevent buttons from sending more than one signal
   delay(100);
 }
